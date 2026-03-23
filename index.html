@@ -223,6 +223,10 @@
                 Primeiro plano
                 <input type="color" id="fg-color" value="#0B0F1A" />
               </label>
+              <label class="checkbox">
+                <input type="checkbox" id="fg-gradient-enabled" />
+                Usar degradê no QR
+              </label>
               <label>
                 Moldura do olho
                 <input type="color" id="eye-frame" value="#0B0F1A" />
@@ -231,6 +235,46 @@
                 Centro do olho
                 <input type="color" id="eye-center" value="#0B0F1A" />
               </label>
+            </div>
+            <div id="gradient-controls" class="gradient-controls is-hidden">
+              <div class="grid-2">
+                <label>
+                  Cor inicial
+                  <input type="color" id="fg-gradient-start" value="#0B0F1A" />
+                </label>
+                <label>
+                  Cor final
+                  <input type="color" id="fg-gradient-end" value="#1F6FEB" />
+                </label>
+              </div>
+              <p class="option-title">Forma do degradê</p>
+              <div class="gradient-modes">
+                <label class="gradient-option">
+                  <input type="radio" name="gradient-mode" value="linear-0" checked />
+                  <span>Horizontal</span>
+                  <span class="gradient-swatch grad-linear-0"></span>
+                </label>
+                <label class="gradient-option">
+                  <input type="radio" name="gradient-mode" value="linear-90" />
+                  <span>Vertical</span>
+                  <span class="gradient-swatch grad-linear-90"></span>
+                </label>
+                <label class="gradient-option">
+                  <input type="radio" name="gradient-mode" value="linear-45" />
+                  <span>Diagonal 45</span>
+                  <span class="gradient-swatch grad-linear-45"></span>
+                </label>
+                <label class="gradient-option">
+                  <input type="radio" name="gradient-mode" value="linear-135" />
+                  <span>Diagonal 135</span>
+                  <span class="gradient-swatch grad-linear-135"></span>
+                </label>
+                <label class="gradient-option">
+                  <input type="radio" name="gradient-mode" value="radial-center" />
+                  <span>Circular (centro)</span>
+                  <span class="gradient-swatch grad-radial-center"></span>
+                </label>
+              </div>
             </div>
 
             <div class="radio-select" data-radio-select="dots-type">

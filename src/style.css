@@ -161,6 +161,10 @@ body {
   display: none;
 }
 
+.is-hidden {
+  display: none !important;
+}
+
 label {
   display: grid;
   gap: 6px;
@@ -324,6 +328,71 @@ input[type="color"] {
 .radio-select-option:has(input:checked) {
   background: #eef4ff;
   color: var(--primary);
+}
+
+.gradient-controls {
+  border: 1px solid #e3eaf6;
+  border-radius: 14px;
+  padding: 12px;
+  background: #fbfdff;
+  display: grid;
+  gap: 10px;
+}
+
+.gradient-modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 8px;
+}
+
+.gradient-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid #d6deec;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.gradient-option input {
+  display: none;
+}
+
+.gradient-option:has(input:checked) {
+  border-color: var(--primary);
+  background: #eef4ff;
+  color: var(--primary);
+}
+
+.gradient-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.grad-linear-0 {
+  background: linear-gradient(90deg, #0b0f1a, #1f6feb);
+}
+
+.grad-linear-90 {
+  background: linear-gradient(180deg, #0b0f1a, #1f6feb);
+}
+
+.grad-linear-45 {
+  background: linear-gradient(45deg, #0b0f1a, #1f6feb);
+}
+
+.grad-linear-135 {
+  background: linear-gradient(135deg, #0b0f1a, #1f6feb);
+}
+
+.grad-radial-center {
+  background: radial-gradient(circle at center, #0b0f1a 0%, #1f6feb 100%);
 }
 
 .shape {

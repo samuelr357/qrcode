@@ -13,6 +13,12 @@ const state = {
     eyeCenter: "#0B0F1A",
     transparent: false
   },
+  gradient: {
+    enabled: false,
+    start: "#0B0F1A",
+    end: "#1F6FEB",
+    mode: "linear-0"
+  },
   shapes: {
     dots: "square",
     cornerSquare: "square",
@@ -30,6 +36,10 @@ const elements = {
   bgColor: document.getElementById("bg-color"),
   bgTransparent: document.getElementById("bg-transparent"),
   fgColor: document.getElementById("fg-color"),
+  fgGradientEnabled: document.getElementById("fg-gradient-enabled"),
+  fgGradientStart: document.getElementById("fg-gradient-start"),
+  fgGradientEnd: document.getElementById("fg-gradient-end"),
+  gradientControls: document.getElementById("gradient-controls"),
   eyeFrame: document.getElementById("eye-frame"),
   eyeCenter: document.getElementById("eye-center"),
   logo: document.getElementById("logo"),
@@ -37,15 +47,52 @@ const elements = {
   size: document.getElementById("size")
 };
 
+const getGradientConfig = () => {
+  const colorStops = [
+    { offset: 0, color: state.gradient.start },
+    { offset: 1, color: state.gradient.end }
+  ];
+  if (state.gradient.mode === "radial-center") {
+    return {
+      type: "radial",
+      rotation: 0,
+      colorStops
+    };
+  }
+  const rotationMap = {
+    "linear-0": 0,
+    "linear-45": Math.PI / 4,
+    "linear-90": Math.PI / 2,
+    "linear-135": (3 * Math.PI) / 4
+  };
+  return {
+    type: "linear",
+    rotation: rotationMap[state.gradient.mode] ?? 0,
+    colorStops
+  };
+};
+
+const getDotsOptions = () => {
+  if (!state.gradient.enabled) {
+    return {
+      color: state.colors.fg,
+      type: state.shapes.dots,
+      gradient: null
+    };
+  }
+  return {
+    type: state.shapes.dots,
+    gradient: getGradientConfig(),
+    color: undefined
+  };
+};
+
 const qrCode = new QRCodeStyling({
   width: state.size,
   height: state.size,
   data: "https://seusite.com",
   image: state.logo,
-  dotsOptions: {
-    color: state.colors.fg,
-    type: state.shapes.dots
-  },
+  dotsOptions: getDotsOptions(),
   cornersSquareOptions: {
     color: state.colors.eyeFrame,
     type: state.shapes.cornerSquare
@@ -177,16 +224,15 @@ const updatePreview = () => {
   const payload = buildPayload();
   elements.previewSize.textContent = `${state.size} x ${state.size} px`;
   elements.bgColor.disabled = state.colors.transparent;
+  elements.fgColor.disabled = state.gradient.enabled;
+  elements.gradientControls.classList.toggle("is-hidden", !state.gradient.enabled);
 
   qrCode.update({
     width: state.size,
     height: state.size,
     data: payload,
     image: state.logo || undefined,
-    dotsOptions: {
-      color: state.colors.fg,
-      type: state.shapes.dots
-    },
+    dotsOptions: getDotsOptions(),
     cornersSquareOptions: {
       color: state.colors.eyeFrame,
       type: state.shapes.cornerSquare
@@ -266,11 +312,38 @@ const bindRadioSelects = () => {
 const bindInputs = () => {
   document.querySelectorAll("input, textarea, select").forEach((input) => {
     const handler = () => {
+      const nextGradientEnabled = elements.fgGradientEnabled.checked;
+      let nextFg = elements.fgColor.value;
+      let nextGradientStart = elements.fgGradientStart.value;
+      const nextGradientEnd = elements.fgGradientEnd.value;
+
+      if (nextGradientEnabled) {
+        // When gradient is enabled, gradient start becomes the source of truth.
+        if (!state.gradient.enabled) {
+          nextGradientStart = nextFg;
+          elements.fgGradientStart.value = nextGradientStart;
+        }
+        nextFg = nextGradientStart;
+        elements.fgColor.value = nextFg;
+      } else {
+        // When gradient is disabled, first-plane color is the source of truth.
+        if (state.gradient.enabled) {
+          nextFg = nextGradientStart;
+          elements.fgColor.value = nextFg;
+        }
+        nextGradientStart = nextFg;
+        elements.fgGradientStart.value = nextGradientStart;
+      }
+
       state.colors.bg = elements.bgColor.value;
-      state.colors.fg = elements.fgColor.value;
+      state.colors.fg = nextFg;
       state.colors.eyeFrame = elements.eyeFrame.value;
       state.colors.eyeCenter = elements.eyeCenter.value;
       state.colors.transparent = elements.bgTransparent.checked;
+      state.gradient.enabled = nextGradientEnabled;
+      state.gradient.start = nextGradientStart;
+      state.gradient.end = nextGradientEnd;
+      state.gradient.mode = getCheckedRadioValue("gradient-mode", "linear-0");
       state.shapes.dots = getCheckedRadioValue("dots-type", "square");
       state.shapes.cornerSquare = getCheckedRadioValue("corner-square", "square");
       state.shapes.cornerDot = getCheckedRadioValue("corner-dot", "square");
