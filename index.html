@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Studio</title>
+  </head>
+  <body>
+    <div class="app">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">QR Studio</p>
+          <h1>Gere QR Codes modernos em tempo real</h1>
+          <p class="subtitle">Escolha o tipo, personalize o estilo e exporte com resolução alta.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn" id="btn-download-png">Baixar PNG</button>
+          <button class="btn ghost" id="btn-download-svg">Baixar SVG</button>
+        </div>
+      </header>
+
+      <section class="type-grid" id="type-grid">
+        <button class="type-card is-active" data-type="url">
+          <span class="icon">🔗</span>
+          <span>Link único</span>
+        </button>
+        <button class="type-card" data-type="text">
+          <span class="icon">📝</span>
+          <span>Texto</span>
+        </button>
+        <button class="type-card" data-type="location">
+          <span class="icon">📍</span>
+          <span>Localização</span>
+        </button>
+        <button class="type-card" data-type="phone">
+          <span class="icon">📞</span>
+          <span>Chamada</span>
+        </button>
+        <button class="type-card" data-type="email">
+          <span class="icon">✉️</span>
+          <span>Email</span>
+        </button>
+        <button class="type-card" data-type="sms">
+          <span class="icon">💬</span>
+          <span>SMS</span>
+        </button>
+        <button class="type-card" data-type="bitcoin">
+          <span class="icon">₿</span>
+          <span>Bitcoin</span>
+        </button>
+        <button class="type-card" data-type="paypal">
+          <span class="icon">💳</span>
+          <span>PayPal</span>
+        </button>
+        <button class="type-card" data-type="vcard">
+          <span class="icon">👤</span>
+          <span>V-Card simples</span>
+        </button>
+        <button class="type-card" data-type="whatsapp">
+          <span class="icon">🟢</span>
+          <span>WhatsApp</span>
+        </button>
+        <button class="type-card" data-type="wifi">
+          <span class="icon">📶</span>
+          <span>Wi-Fi</span>
+        </button>
+        <button class="type-card" data-type="zoom">
+          <span class="icon">🎥</span>
+          <span>Zoom</span>
+        </button>
+      </section>
+
+      <main class="panel">
+        <section class="controls">
+          <div class="card">
+            <h2>Conteúdo</h2>
+            <div class="form" data-form="url">
+              <label>
+                Link
+                <input type="url" id="url" placeholder="https://" value="https://seusite.com" />
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="text">
+              <label>
+                Texto
+                <textarea id="text" rows="4" placeholder="Digite seu texto"></textarea>
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="location">
+              <label>
+                Latitude
+                <input type="text" id="lat" placeholder="-23.561684" />
+              </label>
+              <label>
+                Longitude
+                <input type="text" id="lng" placeholder="-46.655981" />
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="phone">
+              <label>
+                Telefone
+                <input type="tel" id="phone" placeholder="+55 11 90000-0000" />
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="email">
+              <label>
+                Email
+                <input type="email" id="email" placeholder="contato@email.com" />
+              </label>
+              <label>
+                Assunto
+                <input type="text" id="email-subject" placeholder="Assunto" />
+              </label>
+              <label>
+                Mensagem
+                <textarea id="email-body" rows="3" placeholder="Mensagem"></textarea>
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="sms">
+              <label>
+                Número
+                <input type="tel" id="sms" placeholder="+55 11 90000-0000" />
+              </label>
+              <label>
+                Mensagem
+                <textarea id="sms-body" rows="3" placeholder="Mensagem"></textarea>
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="bitcoin">
+              <label>
+                Endereço
+                <input type="text" id="btc" placeholder="1A1zP1..." />
+              </label>
+              <label>
+                Valor (BTC)
+                <input type="number" step="0.000001" id="btc-amount" placeholder="0.01" />
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="paypal">
+              <label>
+                PayPal.me
+                <input type="text" id="paypal" placeholder="seunome" />
+              </label>
+              <label>
+                Valor
+                <input type="number" step="0.01" id="paypal-amount" placeholder="50.00" />
+              </label>
+              <label>
+                Moeda
+                <input type="text" id="paypal-currency" placeholder="BRL" value="BRL" />
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="vcard">
+              <label>
+                Nome
+                <input type="text" id="vcard-name" placeholder="Nome completo" />
+              </label>
+              <label>
+                Organização
+                <input type="text" id="vcard-org" placeholder="Empresa" />
+              </label>
+              <label>
+                Telefone
+                <input type="tel" id="vcard-phone" placeholder="+55 11 90000-0000" />
+              </label>
+              <label>
+                Email
+                <input type="email" id="vcard-email" placeholder="contato@email.com" />
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="whatsapp">
+              <label>
+                Número
+                <input type="tel" id="whats" placeholder="5511900000000" />
+              </label>
+              <label>
+                Mensagem
+                <textarea id="whats-msg" rows="3" placeholder="Olá!"></textarea>
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="wifi">
+              <label>
+                Rede
+                <input type="text" id="wifi-ssid" placeholder="MinhaRede" />
+              </label>
+              <label>
+                Senha
+                <input type="text" id="wifi-pass" placeholder="senha" />
+              </label>
+              <label>
+                Tipo
+                <select id="wifi-type">
+                  <option value="WPA">WPA/WPA2</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">Sem senha</option>
+                </select>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" id="wifi-hidden" />
+                Rede oculta
+              </label>
+            </div>
+            <div class="form is-hidden" data-form="zoom">
+              <label>
+                Link da reunião
+                <input type="url" id="zoom" placeholder="https://zoom.us/j/" />
+              </label>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Estilo</h2>
+            <div class="grid-2">
+              <label>
+                Fundo
+                <input type="color" id="bg-color" value="#FFFFFF" />
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" id="bg-transparent" />
+                Fundo transparente
+              </label>
+              <label>
+                Primeiro plano
+                <input type="color" id="fg-color" value="#0B0F1A" />
+              </label>
+              <label>
+                Moldura do olho
+                <input type="color" id="eye-frame" value="#0B0F1A" />
+              </label>
+              <label>
+                Centro do olho
+                <input type="color" id="eye-center" value="#0B0F1A" />
+              </label>
+            </div>
+
+            <div class="radio-select" data-radio-select="dots-type">
+              <p class="option-title">Formato do corpo</p>
+              <button type="button" class="radio-select-trigger">
+                <span class="radio-select-label">Quadrado</span>
+                <span class="shape radio-select-preview shape-square"></span>
+              </button>
+              <div class="radio-select-menu">
+                <label class="radio-select-option">
+                  <input type="radio" name="dots-type" value="square" checked />
+                  <span>Quadrado</span>
+                  <span class="shape shape-square"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="dots-type" value="rounded" />
+                  <span>Arredondado</span>
+                  <span class="shape shape-rounded"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="dots-type" value="dots" />
+                  <span>Pontos</span>
+                  <span class="shape shape-dot"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="dots-type" value="classy" />
+                  <span>Classy</span>
+                  <span class="shape shape-classy"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="dots-type" value="classy-rounded" />
+                  <span>Classy Round</span>
+                  <span class="shape shape-classy-rounded"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="dots-type" value="extra-rounded" />
+                  <span>Extra Round</span>
+                  <span class="shape shape-extra-rounded"></span>
+                </label>
+              </div>
+            </div>
+            <div class="radio-select" data-radio-select="corner-square">
+              <p class="option-title">Moldura do olho</p>
+              <button type="button" class="radio-select-trigger">
+                <span class="radio-select-label">Quadrado</span>
+                <span class="shape radio-select-preview eye-square"></span>
+              </button>
+              <div class="radio-select-menu">
+                <label class="radio-select-option">
+                  <input type="radio" name="corner-square" value="square" checked />
+                  <span>Quadrado</span>
+                  <span class="shape eye-square"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="corner-square" value="dot" />
+                  <span>Ponto</span>
+                  <span class="shape eye-dot"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="corner-square" value="extra-rounded" />
+                  <span>Extra Round</span>
+                  <span class="shape eye-extra-rounded"></span>
+                </label>
+              </div>
+            </div>
+            <div class="radio-select" data-radio-select="corner-dot">
+              <p class="option-title">Centro do olho</p>
+              <button type="button" class="radio-select-trigger">
+                <span class="radio-select-label">Quadrado</span>
+                <span class="shape radio-select-preview center-square"></span>
+              </button>
+              <div class="radio-select-menu">
+                <label class="radio-select-option">
+                  <input type="radio" name="corner-dot" value="square" checked />
+                  <span>Quadrado</span>
+                  <span class="shape center-square"></span>
+                </label>
+                <label class="radio-select-option">
+                  <input type="radio" name="corner-dot" value="dot" />
+                  <span>Ponto</span>
+                  <span class="shape center-dot"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Logo e resolução</h2>
+            <label>
+              Logo central
+              <input type="file" id="logo" accept="image/*" />
+            </label>
+            <label>
+              Margem da logo
+              <input type="range" id="logo-margin" min="0" max="20" value="6" />
+            </label>
+            <label>
+              Resolução (px)
+              <input type="number" id="size" min="200" max="2000" step="50" value="1000" />
+            </label>
+          </div>
+        </section>
+
+        <section class="preview">
+          <div class="preview-card">
+            <div id="qr-preview" class="qr-preview"></div>
+            <div class="preview-meta">
+              <span id="preview-size">1000 x 1000 px</span>
+              <button class="btn ghost" id="btn-copy">Copiar conteúdo</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

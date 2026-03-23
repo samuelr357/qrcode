@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: ${GIT_REPO}
+      dockerfile: ${GIT_DOCKERFILE:-Dockerfile}
+    ports:
+      - "${APP_PORT:-5540}:80"
+    restart: unless-stopped
