@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { canAccessAdminPanel } from "@/lib/permissions";
 
 export default function SiteShell({ user, children }) {
   return (
@@ -18,7 +19,7 @@ export default function SiteShell({ user, children }) {
           {user ? (
             <>
               <Link href="/dashboard">Dashboard</Link>
-              {user.role === "ADMIN" ? <Link href="/admin">Admin</Link> : null}
+              {canAccessAdminPanel(user) ? <Link href="/admin">Admin</Link> : null}
               <form action="/api/auth/logout" method="post">
                 <button className="btn ghost" type="submit">
                   Sair

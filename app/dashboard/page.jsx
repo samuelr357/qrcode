@@ -3,6 +3,7 @@ import SiteShell from "@/components/SiteShell";
 import PayButton from "@/components/PayButton";
 import { getCurrentUser } from "@/lib/auth";
 import { getDashboardData } from "@/lib/dashboard";
+import { canAccessAdminPanel } from "@/lib/permissions";
 
 export default async function DashboardPage({ searchParams }) {
   const user = await getCurrentUser();
@@ -16,6 +17,7 @@ export default async function DashboardPage({ searchParams }) {
   return (
     <SiteShell user={user}>
       <section className="section">
+        <p className="eyebrow">Painel do usuario</p>
         <h1>Dashboard</h1>
         <p className="lead">Bem-vindo, <strong>{user.name}</strong>. Gerencie plano, acesso e consumo de QR.</p>
         {paymentStatus === "success" ? <div className="alert ok">Pagamento aprovado. Seu acesso PRO esta ativo.</div> : null}
@@ -33,7 +35,7 @@ export default async function DashboardPage({ searchParams }) {
         <div className="actions-row">
           {dashboard.hasAccess ? <a className="btn" href="/generator">Ir para o gerador</a> : <PayButton label="Ativar plano PRO" />}
           <a className="btn ghost" href="/pricing">Ver planos</a>
-          {user.role === "ADMIN" ? <a className="btn ghost" href="/admin">Abrir admin</a> : null}
+          {canAccessAdminPanel(user) ? <a className="btn ghost" href="/admin">Abrir admin</a> : null}
         </div>
       </section>
     </SiteShell>

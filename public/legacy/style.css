@@ -457,8 +457,23 @@ input[type="color"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-placeholder {
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.95rem;
+  padding: 0 16px;
 }
 
 @media (max-width: 960px) {
@@ -489,5 +504,9 @@ input[type="color"] {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
+  }
+
+  .preview-actions {
+    width: 100%;
   }
 }

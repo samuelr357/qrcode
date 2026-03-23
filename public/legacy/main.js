@@ -1,4 +1,9 @@
-const QRCodeStyling = window.QRCodeStyling;
+const resolveQRCodeStylingCtor = () => {
+  if (typeof window.QRCodeStyling === "function") return window.QRCodeStyling;
+  if (typeof window.QRCodeStyling?.default === "function") return window.QRCodeStyling.default;
+  if (typeof window.QRCodeStyling?.QRCodeStyling === "function") return window.QRCodeStyling.QRCodeStyling;
+  return null;
+};
 
 const state = {
   type: "url",
@@ -28,7 +33,9 @@ const state = {
 const elements = {
   typeGrid: document.getElementById("type-grid"),
   preview: document.getElementById("qr-preview"),
+  previewPlaceholder: document.getElementById("qr-preview-placeholder"),
   previewSize: document.getElementById("preview-size"),
+  btnGeneratePreview: document.getElementById("btn-generate-preview"),
   btnDownloadPng: document.getElementById("btn-download-png"),
   btnDownloadSvg: document.getElementById("btn-download-svg"),
   btnCopy: document.getElementById("btn-copy"),
@@ -46,6 +53,8 @@ const elements = {
   size: document.getElementById("size"),
   remainingCounter: document.getElementById("remaining-counter")
 };
+let hasGeneratedPreview = false;
+let qrCode = null;
 
 const getGradientConfig = () => {
   const colorStops = [
@@ -87,30 +96,58 @@ const getDotsOptions = () => {
   };
 };
 
-const qrCode = new QRCodeStyling({
-  width: state.size,
-  height: state.size,
-  data: "https://seusite.com",
-  image: state.logo,
-  dotsOptions: getDotsOptions(),
-  cornersSquareOptions: {
-    color: state.colors.eyeFrame,
-    type: state.shapes.cornerSquare
-  },
-  cornersDotOptions: {
-    color: state.colors.eyeCenter,
-    type: state.shapes.cornerDot
-  },
-  backgroundOptions: {
-    color: state.colors.bg
-  },
-  imageOptions: {
-    margin: state.logoMargin,
-    crossOrigin: "anonymous"
-  }
-});
+const syncAppearanceControls = () => {
+  elements.bgColor.disabled = state.colors.transparent;
+  elements.fgColor.disabled = state.gradient.enabled;
+  elements.gradientControls.classList.toggle("is-hidden", !state.gradient.enabled);
+};
 
-qrCode.append(elements.preview);
+const disableGenerateActions = () => {
+  if (elements.btnGeneratePreview) elements.btnGeneratePreview.disabled = true;
+  if (elements.btnDownloadPng) elements.btnDownloadPng.disabled = true;
+  if (elements.btnDownloadSvg) elements.btnDownloadSvg.disabled = true;
+};
+
+const showLibraryError = () => {
+  if (elements.previewPlaceholder) {
+    elements.previewPlaceholder.style.display = "block";
+    elements.previewPlaceholder.textContent = "Nao foi possivel carregar a biblioteca de QR Code. Recarregue a pagina.";
+  }
+  disableGenerateActions();
+};
+
+const ensureQrCodeReady = () => {
+  if (qrCode) return true;
+
+  const QRCodeStylingCtor = resolveQRCodeStylingCtor();
+  if (!QRCodeStylingCtor) return false;
+
+  qrCode = new QRCodeStylingCtor({
+    width: state.size,
+    height: state.size,
+    data: "https://seusite.com",
+    image: state.logo,
+    dotsOptions: getDotsOptions(),
+    cornersSquareOptions: {
+      color: state.colors.eyeFrame,
+      type: state.shapes.cornerSquare
+    },
+    cornersDotOptions: {
+      color: state.colors.eyeCenter,
+      type: state.shapes.cornerDot
+    },
+    backgroundOptions: {
+      color: state.colors.bg
+    },
+    imageOptions: {
+      margin: state.logoMargin,
+      crossOrigin: "anonymous"
+    }
+  });
+
+  qrCode.append(elements.preview);
+  return true;
+};
 
 const forms = Array.from(document.querySelectorAll(".form"));
 const typeCards = Array.from(document.querySelectorAll(".type-card"));
@@ -221,11 +258,17 @@ const buildPayload = () => {
 };
 
 const updatePreview = () => {
+  if (!ensureQrCodeReady()) {
+    showLibraryError();
+    return false;
+  }
+
   const payload = buildPayload();
   elements.previewSize.textContent = `${state.size} x ${state.size} px`;
-  elements.bgColor.disabled = state.colors.transparent;
-  elements.fgColor.disabled = state.gradient.enabled;
-  elements.gradientControls.classList.toggle("is-hidden", !state.gradient.enabled);
+  if (elements.previewPlaceholder) {
+    elements.previewPlaceholder.style.display = "none";
+  }
+  syncAppearanceControls();
 
   qrCode.update({
     width: state.size,
@@ -249,6 +292,17 @@ const updatePreview = () => {
       crossOrigin: "anonymous"
     }
   });
+  return true;
+};
+
+const markPreviewAsPending = () => {
+  hasGeneratedPreview = false;
+  if (elements.previewPlaceholder) {
+    elements.previewPlaceholder.style.display = "block";
+  }
+  if (!elements.btnGeneratePreview) return;
+  elements.btnGeneratePreview.disabled = false;
+  elements.btnGeneratePreview.textContent = "Gerar preview";
 };
 
 const setActiveType = (type) => {
@@ -259,7 +313,7 @@ const setActiveType = (type) => {
   forms.forEach((form) => {
     form.classList.toggle("is-hidden", form.dataset.form !== type);
   });
-  updatePreview();
+  markPreviewAsPending();
 };
 
 const bindRadioSelects = () => {
@@ -278,7 +332,7 @@ const bindRadioSelects = () => {
       labelEl.textContent = optionLabel.textContent;
     }
     if (previewEl && optionShape) {
-      previewEl.className = optionShape.className;
+      previewEl.className = `${optionShape.className} radio-select-preview`;
     }
   };
 
@@ -354,8 +408,8 @@ const bindInputs = () => {
         elements.size.value = String(clampedSize);
       }
       state.size = clampedSize;
-      elements.bgColor.disabled = state.colors.transparent;
-      updatePreview();
+      syncAppearanceControls();
+      markPreviewAsPending();
     };
     input.addEventListener("input", handler);
     input.addEventListener("change", handler);
@@ -365,25 +419,62 @@ const bindInputs = () => {
     const file = event.target.files?.[0];
     if (!file) {
       state.logo = null;
-      updatePreview();
+      markPreviewAsPending();
       return;
     }
     const reader = new FileReader();
     reader.onload = () => {
       state.logo = reader.result;
-      updatePreview();
+      markPreviewAsPending();
     };
     reader.readAsDataURL(file);
   });
 
-  elements.btnDownloadPng.addEventListener("click", async () => {
+  elements.btnGeneratePreview?.addEventListener("click", async () => {
+    const button = elements.btnGeneratePreview;
+    if (!ensureQrCodeReady()) {
+      showLibraryError();
+      return;
+    }
+    button.disabled = true;
+    button.textContent = "Gerando...";
     const canProceed = await consumeQuota();
-    if (!canProceed) return;
+    if (canProceed) {
+      const rendered = updatePreview();
+      if (!rendered) {
+        button.disabled = false;
+        button.textContent = "Gerar preview";
+        return;
+      }
+      hasGeneratedPreview = true;
+      button.disabled = false;
+      button.textContent = "Preview atualizado";
+      return;
+    }
+    button.disabled = false;
+    button.textContent = "Gerar preview";
+  });
+
+  elements.btnDownloadPng.addEventListener("click", async () => {
+    if (!hasGeneratedPreview) {
+      alert("Clique em Gerar preview antes de baixar.");
+      return;
+    }
+    if (!ensureQrCodeReady()) {
+      showLibraryError();
+      return;
+    }
     qrCode.download({ extension: "png" });
   });
   elements.btnDownloadSvg.addEventListener("click", async () => {
-    const canProceed = await consumeQuota();
-    if (!canProceed) return;
+    if (!hasGeneratedPreview) {
+      alert("Clique em Gerar preview antes de baixar.");
+      return;
+    }
+    if (!ensureQrCodeReady()) {
+      showLibraryError();
+      return;
+    }
     qrCode.download({ extension: "svg" });
   });
 
@@ -444,4 +535,4 @@ bindTypeGrid();
 bindRadioSelects();
 bindInputs();
 setActiveType("url");
-updatePreview();
+markPreviewAsPending();

@@ -14,10 +14,6 @@
           <h1>Gere QR Codes modernos em tempo real</h1>
           <p class="subtitle">Escolha o tipo, personalize o estilo e exporte com resolução alta.</p>
         </div>
-        <div class="hero-actions">
-          <button class="btn" id="btn-download-png">Baixar PNG</button>
-          <button class="btn ghost" id="btn-download-svg">Baixar SVG</button>
-        </div>
       </header>
 
       <section class="type-grid" id="type-grid">
@@ -381,21 +377,62 @@
 
         <section class="preview">
           <div class="preview-card">
-            <div id="qr-preview" class="qr-preview"></div>
+            <div id="qr-preview" class="qr-preview">
+              <p id="qr-preview-placeholder" class="preview-placeholder">Clique em Gerar preview para exibir o QR Code.</p>
+            </div>
             <div class="preview-meta">
               <span id="preview-size">1000 x 1000 px</span>
-              <button class="btn ghost" id="btn-copy">Copiar conteúdo</button>
+              <div class="preview-actions">
+                <button class="btn" id="btn-generate-preview" type="button">Gerar preview</button>
+                <button class="btn" id="btn-download-png" type="button">Baixar PNG</button>
+                <button class="btn ghost" id="btn-download-svg" type="button">Baixar SVG</button>
+                <button class="btn ghost" id="btn-copy" type="button">Copiar conteúdo</button>
+              </div>
             </div>
           </div>
         </section>
       </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.7.6/lib/qr-code-styling.js"></script>
     <script>
       const params = new URLSearchParams(window.location.search);
       window.__qrUser = { unlimited: params.get("unlimited") === "1" };
     </script>
-    <script src="/legacy/main.js"></script>
+    <script>
+      (async () => {
+        const qrLibCandidates = [
+          "https://cdn.jsdelivr.net/npm/qr-code-styling@1.7.6/lib/qr-code-styling.js",
+          "https://unpkg.com/qr-code-styling@1.7.6/lib/qr-code-styling.js",
+          "https://cdn.jsdelivr.net/npm/qr-code-styling/lib/qr-code-styling.js"
+        ];
+
+        const loadScript = (src) =>
+          new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = src;
+            script.async = false;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
+
+        for (const src of qrLibCandidates) {
+          try {
+            await loadScript(src);
+            if (
+              typeof window.QRCodeStyling === "function" ||
+              typeof window.QRCodeStyling?.default === "function" ||
+              typeof window.QRCodeStyling?.QRCodeStyling === "function"
+            ) {
+              break;
+            }
+          } catch {
+            // tenta proxima origem
+          }
+        }
+
+        await loadScript("/legacy/main.js");
+      })();
+    </script>
   </body>
 </html>
