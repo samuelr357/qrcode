@@ -1,46 +1,45 @@
-# QR Studio
+# QR Studio Next.js
 
-Projeto web para geração de QR Code em tempo real, com personalização de estilo, cores, logo e resolução.
+Migracao completa para Next.js com:
 
-## Rodar com Docker (producao)
+- landing page moderna
+- login e cadastro
+- pagina de precos
+- painel admin com quantidade de usuarios
+- sistema de permissoes (`ADMIN` e `USER`)
+- pagamento Mercado Pago
+- bloqueio de acesso ao gerador sem assinatura
+- limite mensal de 30 QRs para usuario comum
+- admin com geracao ilimitada
+- termos de uso e politica LGPD
+- Prisma + SQLite em dev
+- gerador legado mantido com os mesmos recursos visuais/funcionais
 
-```bash
-docker compose up --build
-```
-
-Abra `http://localhost:5540`.
-
-## Rodar com Docker (desenvolvimento)
-
-```bash
-docker compose -f docker-compose.dev.yml up --build
-```
-
-Abra `http://localhost:8080`.
-
-## Rodar localmente
+## Rodar local
 
 ```bash
 npm install
+cp .env.example .env
+npm run db:generate
+npm run db:push
 npm run dev
 ```
 
-Abra `http://localhost:5173`.
+Acesse: `http://localhost:3000`
 
-## Deploy automatico de um projeto no GitHub
+## Rotas principais
 
-Use este comando para buildar e subir direto de um repositorio remoto:
+- `/` landing
+- `/pricing` precos
+- `/login` login
+- `/register` cadastro
+- `/dashboard` painel do usuario
+- `/admin` painel admin
+- `/generator` gerador legado
+- `/terms` termos de uso
+- `/privacy` politica LGPD
 
-```bash
-./deploy-github.sh https://github.com/usuario/projeto.git main 5540
-```
+## Mercado Pago
 
-Ou sem script:
-
-```bash
-GIT_REPO="https://github.com/usuario/projeto.git#main" APP_PORT=5540 docker compose -f docker-compose.github.yml up --build -d
-```
-
-Notas:
-- O repositorio remoto precisa ter `Dockerfile` na raiz (ou defina `GIT_DOCKERFILE`).
-- Para repositorio privado, configure autenticacao do Docker/Git no host antes de rodar.
+Configure `MERCADO_PAGO_ACCESS_TOKEN` no `.env`.
+Sem token, o sistema usa modo de simulacao para desenvolvimento.
